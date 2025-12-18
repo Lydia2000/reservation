@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的預約系統</title>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        #status { color: red; margin-top: 20px; }
+        #user-info { display: none; margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        img { border-radius: 50%; width: 100px; }
+    </style>
+</head>
+<body>
+    <h1>預約系統測試</h1>
+    <p id="status">正在載入 LIFF...</p>
+
+    <div id="user-info">
+        <img id="pictureUrl" src="" alt="User Picture">
+        <p>哈囉，<b id="displayName"></b></p>
+        <p>你的 User ID 是：</p>
+        <code id="userId"></code>
+    </div>
+
+    <script>
+        // 這裡填入你的 LIFF ID
+        const MY_LIFF_ID = "2008717412-tYoUIzwC";
+
+        // 初始化 LIFF
+        liff.init({ liffId: MY_LIFF_ID })
+            .then(() => {
+                // 初始化成功
+                document.getElementById('status').innerText = "LIFF 初始化成功！";
+                
+                // 檢查使用者是否已登入
+                if (!liff.isLoggedIn()) {
+                    liff.login(); // 沒登入就叫他登入
+                } else {
+                    // 已經登入，取得用戶資料
+                    getUserProfile();
+                }
+            })
+            .catch((err) => {
+                // 初始化失敗
+                document.getElementById('status').innerText = "發生錯誤: " + err;
+            });
+
+        function getUserProfile() {
+            liff.getProfile()
+                .then(profile => {
+                    // 顯示用戶資料到畫面上
+                    document.getElementById('user-info').style.display = 'block';
+                    document.getElementById('displayName').innerText = profile.displayName;
+                    document.getElementById('userId').innerText = profile.userId;
+                    document.getElementById('pictureUrl').src = profile.pictureUrl;
+                    document.getElementById('status').innerText = "讀取資料成功";
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        }
+    </script>
+</body>
+</html>
